@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState,useRef} from "react";
 import {useParams, Link} from "react-router-dom";
 // ================ Plugin de slide ================ //
 import "react-alice-carousel/lib/alice-carousel.css";
 import Slideshow from 'react-alice-carousel';
 // ================================================= //
+import {MdKeyboardArrowLeft,MdKeyboardArrowRight} from 'react-icons/md'
 import {
     PageArea,
     Fake,
@@ -22,7 +23,9 @@ const AdPage = () => {
     const [loading, setLoading] = useState(true);
     const [adInfo, setAdInfo] = useState({});
 
-    useEffect(() => {
+    const refCarousel = useRef(null)
+
+    useEffect(() => { 
         const getAdInfo = async (id) => {
             const json = await api.getAd(id, true);
             setAdInfo(json);
@@ -30,7 +33,12 @@ const AdPage = () => {
         };
         getAdInfo(id);
     }, []);
-
+    const thumbItem = (item,i)=>(
+        // Aqui e seu componente/função que fará o navegação dos items
+        <img key={i} src={item} onClick={()=>{
+            refCarousel.current.slideTo(i) //função pega da referencia do carousel
+        }} alt="" className="thumb"/>
+    )
     const formatDate = (date) => {
         const cDate = new Date(date);
         const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
@@ -40,7 +48,6 @@ const AdPage = () => {
 
         return `${cDay} de ${months[cMonth]} de ${cYear}`;
     }
-
     return (
         <PageContainer>
             {adInfo.category &&
@@ -63,17 +70,34 @@ const AdPage = () => {
                         <div className="adImage">
                             {loading && <Fake height={300}/>}
                             {adInfo.images &&
-                            <Slideshow
-                                autoPlayInterval={5000}
-                                autoPlay={true}
-                                fadeOutAnimation={true}
-                                duration={400}
-                            >
-                                {adInfo.images.map((img, k) =>
-                                    <img key={k} src={img} alt=""
-                                         className="yours-custom-class"/>
-                                )}
-                            </Slideshow>
+                                <>
+                                    <Slideshow
+                                        items={adInfo.images.map((img,key)=><img key={key} src={img} alt="" className="slideThumb"/>)}//Para Adicionar os items no Carousel,Você Pode criar Uma função separada se quiser
+                                        fadeOutAnimation={true}
+                                        duration={400}
+                                        buttonsDisabled={true} // Para desabilitar os botoes prev next
+                                        mouseTrackingEnabled={true}
+                                        dotsDisabled={true}
+                                        keysControlDisabled={false}
+                                        ref={refCarousel} //referencia do Carousel
+                                    />
+                                    <div className="buttons-nav">
+                                        {/* Setas */}
+                                        <button onClick={()=>refCarousel.current.slidePrev()}>
+                                            <MdKeyboardArrowLeft size="50"/>
+                                        </button>
+                                        <button onClick={()=>refCarousel.current.slideNext()}>
+                                            <MdKeyboardArrowRight size="50"/>
+                                        </button>
+                                    </div>
+                                </>
+                            }
+                        </div>
+
+                        <div className="thumb-footer">
+                            {/* Aqui e Onde ficará as Suas thumbs, Estilize da forma que você quiser */}
+                            {adInfo.images &&
+                                <nav>{adInfo.images.map(thumbItem)}</nav>
                             }
                         </div>
                         <div className="adInf">

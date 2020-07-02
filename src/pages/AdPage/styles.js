@@ -20,7 +20,6 @@ export const PageArea = styled.div`
             background-color: var(--lightBlue);
         }
     }
-    
     .box {
         background-color: var(--white);
         border-radius: 5px;
@@ -33,7 +32,27 @@ export const PageArea = styled.div`
     .box-p {
         padding: 20px;
     }
-    
+    .slideThumb{
+        cursor:grab;
+    }
+    .thumb{
+        width:100px;
+        height:100px;
+        cursor:pointer;
+        padding:0px 8px;
+    }
+    .thumb-footer{
+        display:flex;
+        justify-content:center;
+        margin-top:10px;
+    }
+    .buttons-nav{
+        width:740px;
+        display:flex;
+        justify-content:space-around;
+        position:absolute;
+        top:80%;
+    }
     .leftSide {
         flex: 1;
         margin-right: 20px;        
@@ -55,6 +74,10 @@ export const PageArea = styled.div`
             
             .alice-carousel__stage-item {
                 text-align: center;
+            }
+            .thumb{
+                width:10px;
+                heigth:10px;
             }
         }
         
